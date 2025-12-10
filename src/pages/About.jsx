@@ -6,7 +6,7 @@ import Card from 'react-bootstrap/Card';
 export default function About() {
     return (
         <Container className="py-5">
-            <h1 className="mb-4">About Manga Haven</h1>
+            <h1 className="mb-4">About Manga Shack</h1>
             
             <Row className="mb-4">
                 <Col md={6}>
@@ -14,7 +14,7 @@ export default function About() {
                         <Card.Body>
                             <Card.Title>Our Story</Card.Title>
                             <Card.Text>
-                                Founded in 2020, Manga Haven has been dedicated to bringing the best 
+                                Founded in 2020, Manga Shack has been dedicated to bringing the best 
                                 manga collection to fans worldwide. We started with a passion for 
                                 Japanese comics and have grown into a trusted source for manga lovers.
                             </Card.Text>
@@ -51,7 +51,7 @@ export default function About() {
 
             <div className="mt-4">
                 <h3>Contact Us</h3>
-                <p>Email: info@mangahaven.com</p>
+                <p>Email: info@mangashack.com</p>
                 <p>Phone: (555) 123-4567</p>
                 <p>Address: 123 Manga Street, Comic City, CC 12345</p>
             </div>

@@ -10,13 +10,11 @@ import "../styles/Home.css"
 export default function Home() {
     return (
             <>
-            <div className="bg-primary text-white text-center py-5">
+            <div id="welcome-card" className="text-white text-center py-5" >
                 <Container>
-                    <h1 className="display-4">Welcome to Manga Haven</h1>
+                    <h1 className="display-2">Welcome to Manga shack</h1>
                     <p className="lead">Your one-stop shop for manga</p>
-                    <Button variant="light" size="lg" href="/products">
-                        Browse Collection
-                    </Button>
+                    
                 </Container>
             </div>
 

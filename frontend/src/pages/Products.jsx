@@ -38,7 +38,7 @@ export default function Products() {
                 {/* Product cards will be mapped here */}
                 <Col sm={6} md={4} lg={3} className="mb-4">
                     <Card>
-                        <Card.Img variant="top" src="https://via.placeholder.com/300x400" />
+                        <Card.Img variant="top" src="https://dummyimage.com/mediumrectangle" />
                         <Card.Body>
                             <Card.Title>Manga Title</Card.Title>
                             <Card.Text>$9.99</Card.Text>
@@ -48,7 +48,7 @@ export default function Products() {
                 </Col>
                 <Col sm={6} md={4} lg={3} className="mb-4">
                     <Card>
-                        <Card.Img variant="top" src="https://via.placeholder.com/300x400" />
+                        <Card.Img variant="top" src="https://dummyimage.com/mediumrectangle" />
                         <Card.Body>
                             <Card.Title>Manga Title</Card.Title>
                             <Card.Text>$9.99</Card.Text>
@@ -58,7 +58,7 @@ export default function Products() {
                 </Col>
                 <Col sm={6} md={4} lg={3} className="mb-4">
                     <Card>
-                        <Card.Img variant="top" src="https://via.placeholder.com/300x400" />
+                        <Card.Img variant="top" src="https://dummyimage.com/mediumrectangle" />
                         <Card.Body>
                             <Card.Title>Manga Title</Card.Title>
                             <Card.Text>$9.99</Card.Text>

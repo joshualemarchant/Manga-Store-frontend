@@ -26,7 +26,7 @@ export default function Home() {
                 <Row>
                     <Col md={4} className="mb-3">
                         <Card>
-                            <Card.Img variant="top" src="https://via.placeholder.com/300x400" />
+                            <Card.Img variant="top" src="https://dummyimage.com/mediumrectangle" />
                             <Card.Body>
                                 <Card.Title>Manga Title</Card.Title>
                                 <Card.Text>$9.99</Card.Text>
@@ -36,7 +36,7 @@ export default function Home() {
                     </Col>
                     <Col md={4} className="mb-3">
                         <Card>
-                            <Card.Img variant="top" src="https://via.placeholder.com/300x400" />
+                            <Card.Img variant="top" src="https://dummyimage.com/mediumrectangle"/>
                             <Card.Body>
                                 <Card.Title>Manga Title</Card.Title>
                                 <Card.Text>$9.99</Card.Text>
@@ -46,7 +46,7 @@ export default function Home() {
                     </Col>
                     <Col md={4} className="mb-3">
                         <Card>
-                            <Card.Img variant="top" src="https://via.placeholder.com/300x400" />
+                            <Card.Img variant="top" src="https://dummyimage.com/mediumrectangle" />
                             <Card.Body>
                                 <Card.Title>Manga Title</Card.Title>
                                 <Card.Text>$9.99</Card.Text>

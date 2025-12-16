@@ -8,19 +8,22 @@ class GenreAdmin(admin.ModelAdmin):
 
 @admin.register(Theme)
 class ThemeAdmin(admin.ModelAdmin):
-    pass
+    list_display = ['id', 'name']
 
 
 @admin.register(Demographic)
 class DemographicAdmin(admin.ModelAdmin):
-    pass
+    list_display = ['id', 'name']
 
 
 @admin.register(Author)
 class AuthorAdmin(admin.ModelAdmin):
-    pass
+    list_display = ['id', 'name']
 
 
 @admin.register(MangaItem)
 class MangaItemdmin(admin.ModelAdmin):
-    pass
+   pass
+
+
+ 

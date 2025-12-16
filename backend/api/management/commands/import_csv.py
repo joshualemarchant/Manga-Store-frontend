@@ -11,17 +11,27 @@ class Command(BaseCommand):
         parser.add_argument("filepath", type=str)
 
     def safe_list(self, value):
-        """Safely parse list-like string values"""
+        """
+        Safely parse list-like or comma-separated string values
+        """
         if not value or value.strip() == "":
             return []
-        try:
-            return ast.literal_eval(value)
-        except:
-            return []
+
+        value = value.strip()
+
+        # Try Python list literal first (e.g. "['A', 'B']")
+        if value.startswith("["):
+            try:
+                return [v.strip() for v in ast.literal_eval(value)]
+            except Exception:
+                pass
+
+        # Fallback: treat as comma-separated string
+        return [v.strip() for v in value.split(",") if v.strip()]
 
     def handle(self, *args, **options):
         filepath = options["filepath"]
-        print("Importing from:", filepath)
+        self.stdout.write(f"Importing from: {filepath}")
 
         with open(filepath, "r", newline="", encoding="utf-8") as csvfile:
             csv_reader = csv.reader(csvfile)
@@ -29,45 +39,44 @@ class Command(BaseCommand):
 
             for idx, row in enumerate(csv_reader, start=1):
 
-                # unpack row
                 (
                     title, score, votes, ranked, popularity, members, favorites,
                     volumes, chapters, status, published, genres, themes,
                     demographics, serialization, authors
                 ) = row
 
-                # parse lists safely
+                # Parse lists safely
                 genres = self.safe_list(genres)
                 themes = self.safe_list(themes)
                 demographics = self.safe_list(demographics)
                 authors = self.safe_list(authors)
 
-                # parse members as int
-                members = int(members.replace(',',''))
-                favorites = int(favorites.replace(',',''))
+                # Parse numeric fields
+                members = int(members.replace(",", "")) if members else None
+                favorites = int(favorites.replace(",", "")) if favorites else None
 
-                # Create/get related objects
+                # ---- Related objects ----
                 genre_objs = [
-                    Genre.objects.get_or_create(name=g.strip())[0]
+                    Genre.objects.get_or_create(name=g)[0]
                     for g in genres
                 ]
 
                 theme_objs = [
-                    Theme.objects.get_or_create(name=t.strip())[0]
+                    Theme.objects.get_or_create(name=t)[0]
                     for t in themes
                 ]
 
                 demographic_objs = [
-                    Demographic.objects.get_or_create(name=d.strip())[0]
+                    Demographic.objects.get_or_create(name=d)[0]
                     for d in demographics
                 ]
 
                 author_objs = [
-                    Author.objects.get_or_create(name=a.strip())[0]
+                    Author.objects.get_or_create(name=a)[0]
                     for a in authors
                 ]
 
-                # ---- Create Main Model Instance ----
+                # ---- Create Manga ----
                 manga, created = MangaItem.objects.get_or_create(
                     title=title.strip(),
                     defaults={
@@ -75,26 +84,26 @@ class Command(BaseCommand):
                         "votes": votes or None,
                         "ranked": ranked or None,
                         "popularity": popularity or None,
-                        "members": members or None,
-                        "favorites": favorites or None,
-                        "volumes": volumes if volumes != 'Unknown' else None,
-                        "chapters": chapters if chapters != 'Unknown' else None,
+                        "members": members,
+                        "favorites": favorites,
+                        "volumes": volumes if volumes != "Unknown" else None,
+                        "chapters": chapters if chapters != "Unknown" else None,
                         "status": status,
                         "published": published,
                         "serialization": serialization,
                     }
                 )
 
-                # Add M2M fields
-                manga.genres.set(genre_objs)
-                manga.themes.set(theme_objs)
-                manga.demographics.set(demographic_objs)
-                manga.authors.set(author_objs)
+                # ---- M2M relations ----
+                if created:
+                    manga.genres.set(genre_objs)
+                    manga.themes.set(theme_objs)
+                    manga.demographics.set(demographic_objs)
+                    manga.authors.set(author_objs)
 
-                manga.save()
+                self.stdout.write(f"Imported: {title}")
 
-                print(f"Imported: {title}")
-
+                # Early stop for testing
                 if idx == 5:
-                    print("Stopping early test after 5 rows...")
+                    self.stdout.write("Stopping early test after 5 rows...")
                     break

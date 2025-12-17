@@ -4,8 +4,20 @@ import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import { getManga } from '../../api/manga';
+import { useEffect, useState } from 'react';
 
 export default function Products() {
+    const [manga, setManga] = useState([])
+
+    useEffect(() => {
+        const loadData = async () => {
+            const result = await getManga()
+            setManga(result)
+        }
+        loadData()
+    }, [])
+    
     return (
         <Container className="py-5">
             <h1 className="mb-4">All Manga</h1>
@@ -36,37 +48,18 @@ export default function Products() {
             {/* Product Grid */}
             <Row>
                 {/* Product cards will be mapped here */}
+                {manga.map((manga) => (
                 <Col sm={6} md={4} lg={3} className="mb-4">
                     <Card>
                         <Card.Img variant="top" src="https://dummyimage.com/mediumrectangle" />
                         <Card.Body>
-                            <Card.Title>Manga Title</Card.Title>
+                            <Card.Title>{manga.title}</Card.Title>
                             <Card.Text>$9.99</Card.Text>
                             <Button variant="primary" className="w-100">Add to Cart</Button>
                         </Card.Body>
                     </Card>
                 </Col>
-                <Col sm={6} md={4} lg={3} className="mb-4">
-                    <Card>
-                        <Card.Img variant="top" src="https://dummyimage.com/mediumrectangle" />
-                        <Card.Body>
-                            <Card.Title>Manga Title</Card.Title>
-                            <Card.Text>$9.99</Card.Text>
-                            <Button variant="primary" className="w-100">Add to Cart</Button>
-                        </Card.Body>
-                    </Card>
-                </Col>
-                <Col sm={6} md={4} lg={3} className="mb-4">
-                    <Card>
-                        <Card.Img variant="top" src="https://dummyimage.com/mediumrectangle" />
-                        <Card.Body>
-                            <Card.Title>Manga Title</Card.Title>
-                            <Card.Text>$9.99</Card.Text>
-                            <Button variant="primary" className="w-100">Add to Cart</Button>
-                        </Card.Body>
-                    </Card>
-                </Col>
-                {/* Add more product cards as needed */}
+                ))}              
             </Row>
         </Container>
     );

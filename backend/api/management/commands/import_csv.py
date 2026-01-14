@@ -1,3 +1,5 @@
+import random
+import re  # For regular expressions
 from django.core.management.base import BaseCommand
 from api.models import *
 import csv
@@ -29,6 +31,14 @@ class Command(BaseCommand):
         # Fallback: treat as comma-separated string
         return [v.strip() for v in value.split(",") if v.strip()]
 
+    def clean_author_name(self, author_name):
+        """
+        Clean up author names by removing '(Story & Art)', '(Art)', and '(Story)'
+        """
+        # Remove (Story & Art), (Art), (Story) from author name
+        author_name = re.sub(r"\s?\((Story & Art|Art|Story)\)", "", author_name)
+        return author_name.strip()
+
     def handle(self, *args, **options):
         filepath = options["filepath"]
         self.stdout.write(f"Importing from: {filepath}")
@@ -42,7 +52,7 @@ class Command(BaseCommand):
                 (
                     title, score, votes, ranked, popularity, members, favorites,
                     volumes, chapters, status, published, genres, themes,
-                    demographics, serialization, authors
+                    demographics, serialization, authors,isbn
                 ) = row
 
                 # Parse lists safely
@@ -50,6 +60,9 @@ class Command(BaseCommand):
                 themes = self.safe_list(themes)
                 demographics = self.safe_list(demographics)
                 authors = self.safe_list(authors)
+
+                # Clean each author name
+                authors = [self.clean_author_name(a) for a in authors]
 
                 # Parse numeric fields
                 members = int(members.replace(",", "")) if members else None
@@ -76,6 +89,10 @@ class Command(BaseCommand):
                     for a in authors
                 ]
 
+                # ---- Random price assignment ----
+                price_options = [9.99, 19.99, 29.99]
+                price = random.choice(price_options)
+
                 # ---- Create Manga ----
                 manga, created = MangaItem.objects.get_or_create(
                     title=title.strip(),
@@ -91,6 +108,8 @@ class Command(BaseCommand):
                         "status": status,
                         "published": published,
                         "serialization": serialization,
+                        "price": price, 
+                        "isbn": isbn,
                     }
                 )
 
@@ -101,9 +120,9 @@ class Command(BaseCommand):
                     manga.demographics.set(demographic_objs)
                     manga.authors.set(author_objs)
 
-                self.stdout.write(f"Imported: {title}")
+                self.stdout.write(f"Imported: {title} with price {price} and authors: {authors}")
 
                 # Early stop for testing
-                if idx == 5:
+                if idx == 10:
                     self.stdout.write("Stopping early test after 5 rows...")
                     break

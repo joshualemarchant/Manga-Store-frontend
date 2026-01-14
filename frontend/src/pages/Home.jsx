@@ -2,12 +2,49 @@ import CarouselComp from "../components/CarouselComp";
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Button from 'react-bootstrap/Button';
-import Card from 'react-bootstrap/Card';
-
 import "../styles/Home.css"
+import MangaCard from "../components/MangaCard";
+import Spinner from 'react-bootstrap/Spinner'
+import { useState, useEffect } from "react";
+import { getFeaturedManga, getMangaCoverArt } from '../../api/manga';
 
 export default function Home() {
+    const [manga, setManga] = useState([])
+    const [mangaCover, setCover] = useState({})
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const loadData = async () => {
+            setLoading(true)
+            const result = await getFeaturedManga()
+            setManga(result)
+
+            // Fetch all covers at once
+            const coverPromises = result.map(async (m) => {
+                const image = await getMangaCoverArt(m.title, m.author);
+                return [m.title, image];
+            });
+
+            const coverEntries = await Promise.all(coverPromises);
+            const coverMap = Object.fromEntries(coverEntries);
+            setCover(coverMap);
+
+            setLoading(false)
+        };
+                 
+        loadData()
+    }, [])
+
+    if (loading) {
+        return (
+            <Container className="py-5 text-center">
+                <Spinner animation="border" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                </Spinner>
+                <p className="mt-3">Loading...</p>
+            </Container>
+        );
+    }
     return (
             <>
             <div id="welcome-card" className="text-white text-center py-5" >
@@ -24,36 +61,11 @@ export default function Home() {
             <Container className="py-5">
                 <h2 className="mb-4">Featured Manga</h2>
                 <Row>
-                    <Col md={4} className="mb-3">
-                        <Card>
-                            <Card.Img variant="top" src="https://dummyimage.com/mediumrectangle" />
-                            <Card.Body>
-                                <Card.Title>Manga Title</Card.Title>
-                                <Card.Text>$9.99</Card.Text>
-                                <Button variant="primary">View Details</Button>
-                            </Card.Body>
-                        </Card>
+                    {manga.map((manga) => (
+                    <Col lg={4} md={4} className="mb-3">
+                       <MangaCard manga={manga} cover={mangaCover[manga.title]} />
                     </Col>
-                    <Col md={4} className="mb-3">
-                        <Card>
-                            <Card.Img variant="top" src="https://dummyimage.com/mediumrectangle"/>
-                            <Card.Body>
-                                <Card.Title>Manga Title</Card.Title>
-                                <Card.Text>$9.99</Card.Text>
-                                <Button variant="primary">View Details</Button>
-                            </Card.Body>
-                        </Card>
-                    </Col>
-                    <Col md={4} className="mb-3">
-                        <Card>
-                            <Card.Img variant="top" src="https://dummyimage.com/mediumrectangle" />
-                            <Card.Body>
-                                <Card.Title>Manga Title</Card.Title>
-                                <Card.Text>$9.99</Card.Text>
-                                <Button variant="primary">View Details</Button>
-                            </Card.Body>
-                        </Card>
-                    </Col>
+                ))}
                 </Row>
             </Container>
 

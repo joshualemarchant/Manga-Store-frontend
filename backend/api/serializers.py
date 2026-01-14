@@ -82,4 +82,6 @@ class MangaItemSerializer(serializers.ModelSerializer):
             "theme_ids",
             "demographic_ids",
             "author_ids",
+            "price",
+            "isbn",
         ]

@@ -37,3 +37,8 @@ class MangaItem(models.Model):
     demographics = models.ManyToManyField(to=Demographic)
     serialization = models.CharField(max_length=255)
     authors = models.ManyToManyField(to=Author)
+    price = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    isbn = models.IntegerField(null=True, blank=True)
+
+    def __str__(self):
+        return self.title

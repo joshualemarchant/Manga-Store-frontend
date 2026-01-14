@@ -1,22 +1,50 @@
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Card from 'react-bootstrap/Card';
-import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import { getManga } from '../../api/manga';
+import Spinner from 'react-bootstrap/Spinner'; // import Spinner
+import { getManga, getMangaCoverArt } from '../../api/manga';
 import { useEffect, useState } from 'react';
+import MangaCard from '../components/MangaCard';
+
 
 export default function Products() {
     const [manga, setManga] = useState([])
+    const [mangaCover, setCover] = useState({})
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const loadData = async () => {
+            setLoading(true)
             const result = await getManga()
             setManga(result)
-        }
+
+            // Fetch all covers at once
+            const coverPromises = result.map(async (m) => {
+                const image = await getMangaCoverArt(m.title, m.author);
+                return [m.title, image];
+            });
+
+            const coverEntries = await Promise.all(coverPromises);
+            const coverMap = Object.fromEntries(coverEntries);
+            setCover(coverMap);
+
+            setLoading(false)
+        };
+                 
         loadData()
     }, [])
+
+    if (loading) {
+        return (
+            <Container className="py-5 text-center">
+                <Spinner animation="border" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                </Spinner>
+                <p className="mt-3">Loading...</p>
+            </Container>
+        );
+    }
     
     return (
         <Container className="py-5">
@@ -50,14 +78,7 @@ export default function Products() {
                 {/* Product cards will be mapped here */}
                 {manga.map((manga) => (
                 <Col sm={6} md={4} lg={3} className="mb-4">
-                    <Card>
-                        <Card.Img variant="top" src="https://dummyimage.com/mediumrectangle" />
-                        <Card.Body>
-                            <Card.Title>{manga.title}</Card.Title>
-                            <Card.Text>$9.99</Card.Text>
-                            <Button variant="primary" className="w-100">Add to Cart</Button>
-                        </Card.Body>
-                    </Card>
+                    <MangaCard manga={manga} cover={mangaCover[manga.title]} />
                 </Col>
                 ))}              
             </Row>

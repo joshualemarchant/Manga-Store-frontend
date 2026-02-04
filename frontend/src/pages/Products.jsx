@@ -13,6 +13,18 @@ export default function Products() {
     const [mangaCover, setCover] = useState({})
     const [loading, setLoading] = useState(true);
 
+    
+    const handleSort = (e) => {
+        const criteria = e.target.value;
+        const sortedItems = [...manga].sort((a, b) => {
+        if (criteria === 'alphabetical') return a.title.localeCompare(b.title);
+        if (criteria === 'price-low-to-high') return a.price - b.price 
+        if (criteria === 'price-high-to-low') return b.price - a.price 
+        });
+        setManga(sortedItems);
+    };
+
+
     useEffect(() => {
         const loadData = async () => {
             setLoading(true)
@@ -31,7 +43,7 @@ export default function Products() {
 
             setLoading(false)
         };
-                 
+        
         loadData()
     }, [])
 
@@ -64,11 +76,11 @@ export default function Products() {
                     </Form.Select>
                 </Col>
                 <Col md={3}>
-                    <Form.Select>
-                        <option>Sort by</option>
-                        <option>Price: Low to High</option>
-                        <option>Price: High to Low</option>
-                        <option>Title: A-Z</option>
+                    <Form.Select onChange={handleSort}>
+                        <option value="popularity">Relevance</option>
+                        <option value="price-low-to-high">Price: Low to High</option>
+                        <option value="price-high-to-low">Price: High to Low</option>
+                        <option value="alphabetical">Title: A-Z</option>
                     </Form.Select>
                 </Col>
             </Row>
@@ -77,7 +89,7 @@ export default function Products() {
             <Row>
                 {/* Product cards will be mapped here */}
                 {manga.map((manga) => (
-                <Col sm={6} md={4} lg={3} className="mb-4">
+                <Col key={manga.title} sm={6} md={4} lg={3} className="mb-4">
                     <MangaCard manga={manga} cover={mangaCover[manga.title]} />
                 </Col>
                 ))}              

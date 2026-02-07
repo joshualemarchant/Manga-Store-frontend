@@ -2,12 +2,14 @@
     height: 400px; /* fixed card height */
     display: flex;
     flex-direction: column;
+    border: black;
+    border-style: ;
 }
 
 .card-image {
-    padding: 10px;
-    object-fit: cover; /* makes images look better */
-    height: 400px; /* optional fixed image height */
+    padding: 15px;
+    object-fit: contain; 
+    height: 500px; 
 }
 
 .card-body-wrapper {

@@ -10,7 +10,6 @@ import { getFeaturedManga, getMangaCoverArt } from '../../api/manga';
 
 export default function Home() {
     const [manga, setManga] = useState([])
-    const [mangaCover, setCover] = useState({})
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -18,17 +17,6 @@ export default function Home() {
             setLoading(true)
             const result = await getFeaturedManga()
             setManga(result)
-
-            // Fetch all covers at once
-            const coverPromises = result.map(async (m) => {
-                const image = await getMangaCoverArt(m.title, m.author);
-                return [m.title, image];
-            });
-
-            const coverEntries = await Promise.all(coverPromises);
-            const coverMap = Object.fromEntries(coverEntries);
-            setCover(coverMap);
-
             setLoading(false)
         };
                  
@@ -63,7 +51,7 @@ export default function Home() {
                 <Row>
                     {manga.map((manga) => (
                     <Col lg={4} md={4} className="mb-3">
-                       <MangaCard manga={manga} cover={mangaCover[manga.title]} />
+                       <MangaCard manga={manga} cover={manga.cover} />
                     </Col>
                 ))}
                 </Row>

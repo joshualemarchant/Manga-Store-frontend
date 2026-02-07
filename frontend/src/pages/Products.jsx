@@ -82,7 +82,7 @@ export default function Products() {
             <Row>
                 {/* Product cards will be mapped here */}
                 {manga.map((manga) => (
-                <Col key={manga.title} sm={6} md={4} lg={3} className="mb-4">
+                <Col key={manga.title} sm={6} md={4} lg={4} className="mb-4">
                     <MangaCard manga={manga} cover={[manga.cover]} />
                 </Col>
                 ))}              

@@ -3,24 +3,28 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Spinner from 'react-bootstrap/Spinner'; // import Spinner
-import { getManga, getMangaCoverArt } from '../../api/manga';
+import { getManga } from '../../api/manga';
 import { useEffect, useState } from 'react';
 import MangaCard from '../components/MangaCard';
 
 
 export default function Products() {
     const [manga, setManga] = useState([])
-    const [mangaCover, setCover] = useState({})
     const [loading, setLoading] = useState(true);
 
     
     const handleSort = (e) => {
         const criteria = e.target.value;
         const sortedItems = [...manga].sort((a, b) => {
-        if (criteria === 'alphabetical') return a.title.localeCompare(b.title);
-        if (criteria === 'price-low-to-high') return a.price - b.price 
-        if (criteria === 'price-high-to-low') return b.price - a.price 
-        });
+            switch (criteria) {
+                case 'alphabetical':
+                     return a.title.localeCompare(b.title);
+                case 'price-low-to-high': 
+                    return a.price - b.price 
+                case 'price-high-to-low':
+                     return b.price - a.price 
+                    }
+            });
         setManga(sortedItems);
     };
 
@@ -30,17 +34,6 @@ export default function Products() {
             setLoading(true)
             const result = await getManga()
             setManga(result)
-
-            // Fetch all covers at once
-            const coverPromises = result.map(async (m) => {
-                const image = await getMangaCoverArt(m.title, m.author);
-                return [m.title, image];
-            });
-
-            const coverEntries = await Promise.all(coverPromises);
-            const coverMap = Object.fromEntries(coverEntries);
-            setCover(coverMap);
-
             setLoading(false)
         };
         
@@ -90,7 +83,7 @@ export default function Products() {
                 {/* Product cards will be mapped here */}
                 {manga.map((manga) => (
                 <Col key={manga.title} sm={6} md={4} lg={3} className="mb-4">
-                    <MangaCard manga={manga} cover={mangaCover[manga.title]} />
+                    <MangaCard manga={manga} cover={[manga.cover]} />
                 </Col>
                 ))}              
             </Row>

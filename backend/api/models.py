@@ -39,6 +39,7 @@ class MangaItem(models.Model):
     authors = models.ManyToManyField(to=Author)
     price = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     isbn = models.IntegerField(null=True, blank=True)
+    cover = models.ImageField(upload_to='manga_covers/', null=True, blank=True)
 
     def __str__(self):
         return self.title
